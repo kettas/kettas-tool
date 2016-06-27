@@ -45,9 +45,9 @@
 			<scope>provided</scope>
 		</dependency>							
 		<dependency>
-			<groupId>commons-dbutils-kettas</groupId>
-			<artifactId>commons-dbutils-kettas</artifactId>
-			<version>1.0</version>
+		    <groupId>com.github.kettas</groupId>
+		    <artifactId>commons-dbutils</artifactId>
+		    <version>2.2.6</version>
 		</dependency>
 	</dependencies>
 </project>
