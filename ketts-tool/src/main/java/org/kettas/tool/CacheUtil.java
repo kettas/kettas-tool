@@ -16,6 +16,7 @@ import java.util.Calendar;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.io.Charsets;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -114,26 +115,35 @@ public class CacheUtil {
 		return "";
 	}
 	private static String getUrlContent(URL url,String encode)throws Exception{
+		return getUrlContent(url,encode,"GET");
+	}
+	private static String getUrlContent(URL url,String encode,String method)throws Exception{
 		if(JsoupGetContent){
-			return readURLToString(url,encode,"POST",5000);
+			return readURLToString(url,encode,method,5000);
 		}else{
 			return Jsoup.parse(url.openStream(),encode,url.toString()).toString();
 		}
 	}
-	public static String getCache(String url,String encode)throws RuntimeException{
+	public static String getCache(String url,Charsets charset)throws RuntimeException{
+		return getCache(url, charset.toString());
+	}
+	public static String getCache(String url,String encode,String method)throws RuntimeException{
 		String sqlString="select body  from paBody where url=?";
 		ResultSet rSet=new DbUtils(dataSource).executeQuery(sqlString,new Object[]{url});
 		try {
 			if(rSet!=null&&rSet.next()){
 				return rSet.getString("body");
 			}else{
-				String body=getUrlContent(new URL(url),encode);
+				String body=getUrlContent(new URL(url),encode,method);
 				putCache(url, body);
 				return body;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("获得内容:"+url+"失败!",e);
-		} 
+		}
+	}
+	public static String getCache(String url,String encode)throws RuntimeException{
+		return getCache(url,encode,"GET");
 	}
 }
