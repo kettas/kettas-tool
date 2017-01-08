@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -83,6 +84,17 @@ public class CacheUtil {
 	}
 	public static Document getCacheDocument(String url,String encode){
 		return Jsoup.parse(getCache(url, encode),url);
+	}
+	public static Document getCacheDocument(String url,String encode,boolean cache) throws MalformedURLException, Exception{
+		return getCacheDocument(url,encode,"GET",cache);
+	}
+	public static Document getCacheDocument(String url,String encode,String method,boolean cache) throws MalformedURLException, Exception{
+		if(cache){
+			return Jsoup.parse(getCache(url, encode),url);
+		}
+		String body=getUrlContent(new URL(url),encode,method);
+		putCache(url, body);
+		return Jsoup.parse(body,url);
 	}
 	private static String inputStreamToString(InputStream inputStream,String encoding){
 		try{
